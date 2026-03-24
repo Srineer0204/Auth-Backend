@@ -71,7 +71,7 @@ exports.loginUser = async (req,res) => {
         );
         const refreshToken = jwt.sign(
             {id: user.id},
-            process.env.JWT__REFRESH_SECRET,
+            process.env.JWT_REFRESH_SECRET,
             {expiresIn: "7d"}
         );
         const tokenQuery = "update users set refresh_token = ? where id = ?";
