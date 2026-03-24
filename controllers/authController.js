@@ -85,7 +85,8 @@ exports.loginUser = async (req,res) => {
             accessToken,
             refreshToken
         });
-        
+        console.log("NEW LOGIN API HIT");
+        console.log("Sending both tokens");
     });
 });
 };
