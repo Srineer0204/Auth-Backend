@@ -64,17 +64,30 @@ exports.loginUser = async (req,res) => {
             return res.status(401).json({message:"Invalid credentials"});
         }
 
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
             {id: user.id,email: user.email, role: user.role},
             process.env.JWT_SECRET,
-            {expiresIn: "1h"}
+            {expiresIn: "15m"}
         );
-        res.status(200).json({
-        success: true,
-        message: "Login successful",
-        token
+        const refreshToken = jwt.sign(
+            {id: user.id},
+            process.env.JWT__REFRESH_SECRET,
+            {expiresIn: "7d"}
+        );
+        const tokenQuery = "update users set refresh_token = ? where id = ?";
+        db.query(tokenQuery,[refreshToken, user.id],(err) => {
+            if(err) {
+                return res.status(500).json({ message: "Error savinf refresh token"});
+            }
+            res.status(200).json({
+            success: true,
+            message: "Login successful",
+            accessToken,
+            refreshToken
+        });
+        
     });
-    });
+});
 };
 
 exports.getProfile = (req,res) => {
