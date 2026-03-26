@@ -24,6 +24,6 @@ router.get("/admin", protect, authorize("admin"), (req, res) => {
 });
 
 //Refresh Token Router
-router.post("/refresh", refreshTokenHadler);
+router.post("/refresh", refreshTokenHandler);
 
 module.exports = router;
