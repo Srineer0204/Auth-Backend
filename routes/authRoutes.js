@@ -6,6 +6,7 @@ const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const validate = require("../middleware/validate");
 const { registerSchema, loginSchema } = require("../validators/authValidator");
+const {refreshTokenHandler} = require("../controllers/authController");
 
 // Public routes
 router.get("/", testAuth);
@@ -21,5 +22,8 @@ router.get("/admin", protect, authorize("admin"), (req, res) => {
         message: "Welcome admin"
     });
 });
+
+//Refresh Token Router
+router.post("/refresh", refreshTokenHadler);
 
 module.exports = router;

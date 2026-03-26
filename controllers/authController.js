@@ -77,7 +77,7 @@ exports.loginUser = async (req,res) => {
         const tokenQuery = "update users set refresh_token = ? where id = ?";
         db.query(tokenQuery,[refreshToken, user.id],(err) => {
             if(err) {
-                return res.status(500).json({ message: "Error savinf refresh token"});
+                return res.status(500).json({ message: "Error saving refresh token"});
             }
             res.status(200).json({
             success: true,
@@ -104,6 +104,39 @@ exports.getProfile = (req,res) => {
         res.json({
             message: "User profile fetched",
             user: results[0]
+        });
+    });
+}
+
+exports.refreshTokenHandler = (req,res) => {
+    const refreshToken = req.body;
+
+    if(!refreshToken) {
+        return res.status(401).json({message:"Refresh token expired"});
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err,decoded) => {
+        if(err) {
+            return res.status(403).json({message:"Invalid or expired refresh token"});
+        }
+
+        const userId = decoded.id;
+
+        const query = "select * from users where id = ? and refresh_token = ?";
+
+        db.query(query, [userId,refreshToken], (err,results) => {
+            if(err || results.length == 0) {
+                return res.status(403).json({message: "Invalid refresh token"});
+            }
+            const user = results[0];
+            const newAccessToken = jwt.sign(
+                {id:user.id,email:user.email, role: user.role},
+                process.env.JWT_SECRET,
+                {expiresIn: "15m"}
+            );
+            res.json({
+                accessToken:newAccessToken
+            });
         });
     });
 }
