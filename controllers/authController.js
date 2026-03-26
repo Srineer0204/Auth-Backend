@@ -109,7 +109,7 @@ exports.getProfile = (req,res) => {
 }
 
 exports.refreshTokenHandler = (req,res) => {
-    const refreshToken = req.body;
+    const {refreshToken} = req.body;
 
     if(!refreshToken) {
         return res.status(401).json({message:"Refresh token expired"});
