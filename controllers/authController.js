@@ -135,8 +135,23 @@ exports.refreshTokenHandler = (req,res) => {
                 {expiresIn: "15m"}
             );
             res.json({
+                success: true,
                 accessToken:newAccessToken
             });
         });
     });
+}
+
+exports.logoutUser = (req,res) => {
+    const userId = req.user.id;
+    const query = "UPDATE users set refresh_token = NULL where id = ?";
+    db.query(query,[userId],(err) => {
+        if(err) {
+            return res.status(500).json({message:"Error logging out"});
+        }
+        res.json({
+            success:true,
+            message:"Logged Out successfully"
+        });
+    })
 }
