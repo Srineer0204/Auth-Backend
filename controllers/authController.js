@@ -134,9 +134,23 @@ exports.refreshTokenHandler = (req,res) => {
                 process.env.JWT_SECRET,
                 {expiresIn: "15m"}
             );
+            const newRefreshToken = jwt.sign(
+                {id:user.id},
+                process.env.JWT_REFRESH_SECRET,
+                {expiresIn: "7d"}
+            );
+            const updateQuery = "UPDATE users SET refresh_token = ? WHERE id = ?";
+            db.query(updateQuery,[newRefreshToken,user.id],(err) => {
+                if(err) {
+                    return res.status(500).json({
+                        message: "Error updating refresh token"
+                    });
+                }
+            })
             res.json({
                 success: true,
-                accessToken:newAccessToken
+                accessToken:newAccessToken,
+                refreshToken: newRefreshToken
             });
         });
     });
@@ -153,5 +167,5 @@ exports.logoutUser = (req,res) => {
             success:true,
             message:"Logged Out successfully"
         });
-    })
+    });
 }
