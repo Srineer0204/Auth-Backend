@@ -67,7 +67,7 @@ exports.loginUser = async (req,res) => {
         const accessToken = jwt.sign(
             {id: user.id,email: user.email, role: user.role},
             process.env.JWT_SECRET,
-            {expiresIn: "15m"}
+            {expiresIn: "10s"}
         );
         const refreshToken = jwt.sign(
             {id: user.id},
@@ -79,11 +79,21 @@ exports.loginUser = async (req,res) => {
             if(err) {
                 return res.status(500).json({ message: "Error saving refresh token"});
             }
-            res.status(200).json({
+        res.cookie("accessToken",accessToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000
+        });
+        res.cookie("refreshToken",refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+        res.status(200).json({
             success: true,
-            message: "Login successful",
-            accessToken,
-            refreshToken
+            message: "Login succesfull"
         });
         console.log("NEW LOGIN API HIT");
         console.log("Sending both tokens");
@@ -109,7 +119,8 @@ exports.getProfile = (req,res) => {
 }
 
 exports.refreshTokenHandler = (req,res) => {
-    const {refreshToken} = req.body;
+    //const {refreshToken} = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if(!refreshToken) {
         return res.status(401).json({message:"Refresh token expired"});
@@ -132,7 +143,7 @@ exports.refreshTokenHandler = (req,res) => {
             const newAccessToken = jwt.sign(
                 {id:user.id,email:user.email, role: user.role},
                 process.env.JWT_SECRET,
-                {expiresIn: "15m"}
+                {expiresIn: "10s"}
             );
             const newRefreshToken = jwt.sign(
                 {id:user.id},
@@ -147,10 +158,22 @@ exports.refreshTokenHandler = (req,res) => {
                     });
                 }
             })
+            
+            res.cookie("accessToken", newAccessToken, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "strict",
+                maxAge: 15 * 60 * 1000
+            });
+            res.cookie("refreshToken", newRefreshToken,{
+                httpOnly: true,
+                secure: false,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
             res.json({
                 success: true,
-                accessToken:newAccessToken,
-                refreshToken: newRefreshToken
+                message:"Token refreshed successfully"
             });
         });
     });
@@ -163,6 +186,17 @@ exports.logoutUser = (req,res) => {
         if(err) {
             return res.status(500).json({message:"Error logging out"});
         }
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict"
+        });
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict"
+        });
+        
         res.json({
             success:true,
             message:"Logged Out successfully"
