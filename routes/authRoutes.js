@@ -1,14 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const { testAuth, registerUser, loginUser, getProfile } = require("../controllers/authController");
+const { 
+    testAuth, 
+    registerUser, 
+    loginUser, 
+    getProfile, 
+    updateProfile, 
+    logoutUser, 
+    refreshTokenHandler,
+    changePassword
+} = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const validate = require("../middleware/validate");
 const { registerSchema, loginSchema } = require("../validators/authValidator");
-const {refreshTokenHandler} = require("../controllers/authController");
-const { logoutUser } = require("../controllers/authController");
-
 
 // Public routes
 router.get("/", testAuth);
@@ -28,6 +34,10 @@ router.get("/admin", protect, authorize("admin"), (req, res) => {
 //Refresh Token Router
 router.post("/refresh", refreshTokenHandler);
 
+//Update profile
+router.put("/profile", protect, updateProfile);
+//Change Password
+router.put("/change-password", protect, changePassword);
 //Logout 
 router.post("/logout",protect,logoutUser);
 
