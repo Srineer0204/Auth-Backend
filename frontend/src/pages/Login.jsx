@@ -66,9 +66,8 @@ try {
     const profile = await api.get("/auth/profile");
     setUser(profile.data.user);
 
-    setTimeout(() => {
-        navigate("/dashboard");
-    }, 2000);
+    navigate("/dashboard");
+
 
 } catch (error) {
     if (error.response) {
