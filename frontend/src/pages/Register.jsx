@@ -8,8 +8,6 @@ import {
     CardContent
 } from "@/components/ui/card";
 import { Link,useNavigate } from "react-router-dom";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Mail, Lock, User,  Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import api from "@/api/axios";
@@ -124,7 +122,7 @@ export default function Register() {
             ">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
-                    <CardDescription className="text-slate-500"><b>Create your account first to <i>Login In</i></b></CardDescription>
+                    <CardDescription className="text-slate-500">Create your account to get started.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -270,11 +268,6 @@ export default function Register() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <Checkbox id="terms" />
-
-                            <Label htmlFor="terms">I agree to the Terms and Conditions</Label>
-                        </div>
                         {error && (
                           <p className="text-md text-red-500 transition-colors">{error}</p>
                         )}

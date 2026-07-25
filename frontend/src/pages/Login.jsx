@@ -8,9 +8,6 @@ import {
   CardDescription
 } from "@/components/ui/card";
 import { Link,useNavigate } from "react-router-dom";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Mail,Lock } from "lucide-react";
 import { useState } from "react";
 import {Eye, EyeOff } from "lucide-react";
@@ -63,8 +60,8 @@ try {
 
     setSuccess(response.data.message);
     setEmail("");
-setPassword("");
-setError("");
+    setPassword("");
+    setError("");
 
     const profile = await api.get("/auth/profile");
     setUser(profile.data.user);
@@ -101,14 +98,14 @@ to-slate-700
       shadow-2xl
       ">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Welcome Back 👋</CardTitle>
+          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
           <CardDescription className="text-slate-500">Sign in to continue to your account</CardDescription>
         </CardHeader>
 
         <CardContent>
           <div className="space-y-6">
             <div>
-              <label className="text-sm">Email</label>
+              <label className="text-sm font-medium">Email</label>
               <div className="relative">
               <Mail 
               className="absolute
@@ -135,7 +132,7 @@ to-slate-700
             </div>
 
             <div>
-              <label className="text-sm">Password</label>
+              <label className="text-sm font-medium">Password</label>
               <div className="relative">
               <Lock 
               className="absolute
@@ -177,14 +174,6 @@ to-slate-700
             </div>
 
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember">Remember me</Label>
-              </div>
-
-              <button className="text-md text-blue-600 hover:underline cursor-pointer">Forgot Password?</button>
-            </div>
             {error && (
    <p className="text-red-500 text-sm">
      {error}
@@ -206,23 +195,6 @@ to-slate-700
             transition-all
             hover:scale-[1.02]">{loading ? "Logging in..." : "Login"}</Button>
 
-            <div className="flex items-center gap-3">
-              <Separator className="flex-1" />
-              <span className="text-sm text-muted-foreground">OR</span>
-              <Separator className="flex-1" />
-            </div>
-
-            <Button 
-            className="
-            w-full 
-            shadow-md 
-            shadow-gray-500/30
-            h-11
-            font-semibold
-            transition-all
-            hover:bg-slate-100
-            " 
-            variant="outline">Continue with Google</Button>
 
             <p className="text-center text-sm">Don't have an account?{" "}
               <Link to="/register" className="
